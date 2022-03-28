@@ -1,6 +1,8 @@
 import Employee from '../models/employee.model'
+import { Request, Response } from 'express';
+import { reqBody } from 'interfaces/reqBody';
 
-export const getAll = async (req, res) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     res.json(await Employee.find().populate('department'))
   }
@@ -9,7 +11,7 @@ export const getAll = async (req, res) => {
   }
 }
 
-export const getRandom = async (req, res) => {
+export const getRandom = async (req: Request, res: Response) => {
   try {
     const count = await Employee.countDocuments()
     const rand = Math.floor(Math.random() * count)
@@ -22,7 +24,7 @@ export const getRandom = async (req, res) => {
   }
 }
 
-export const getId = async (req, res) => {
+export const getId = async (req: Request, res: Response) => {
   try {
     const emp = await Employee.findById(req.params.id)
     if(!emp) res.status(404).json({ message: 'Not found' })
@@ -33,11 +35,11 @@ export const getId = async (req, res) => {
   }
 }
 
-export const post = async (req, res) => {
+export const post = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, department } = req.body
-    const newEmployee = new Employee({ firstName, lastName, department })
-    await newEmployee.save()
+    const { firstName, lastName, department } = req.body as reqBody
+    const empData = { firstName, lastName, department }
+    await Employee.create(empData)
     res.json({ message: 'OK' })
   } 
   catch(err) {
@@ -45,8 +47,8 @@ export const post = async (req, res) => {
   }
 }
 
-export const putId = async (req, res) => {
-  const { firstName, lastName, department } = req.body
+export const putId = async (req: Request, res: Response) => {
+  const { firstName, lastName, department } = req.body as reqBody
   try {
     const emp = await Employee.findById(req.params.id)
     if(emp) {
@@ -60,7 +62,7 @@ export const putId = async (req, res) => {
   }
 }
 
-export const deleteId = async (req, res) => {
+export const deleteId = async (req: Request, res: Response) => {
   try {
     const emp = await(Employee.findById(req.params.id))
     if(emp) {

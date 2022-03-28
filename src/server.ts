@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Router } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import departmentsRoutes from './routes/departments.routes'
@@ -7,15 +7,19 @@ import productsRoutes from './routes/products.routes'
 
 class App {
   app: express.Application
-  routes: [] = []
+  routes: {
+    path: string,
+    routes: Router
+  }[] = []
   db: mongoose.Connection
   server: any
+  // server: express.Application<Record<string | number, any>> // possible option?
 
   constructor() {
     this.app = express()
   }
 
-  connectToDb(url) {
+  connectToDb(url: string) {
     mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     this.db = mongoose.connection
     this.db.once('open', () => {
@@ -24,17 +28,17 @@ class App {
     this.db.on('error', err => console.log('Error ' + err))
   }
 
-  addRoutes(path, routes) {
+  addRoutes(path: string, routes: Router) {
     this.routes.push({ path, routes })
   }
 
-  prepareRoutes() {
+  private prepareRoutes() {
     for(const group of this.routes) {
       this.app.use(group.path, group.routes)
     }
   }
 
-  run(port) {
+  run(port: string | number) {
 
     this.app.use(cors())
     this.app.use(express.json())

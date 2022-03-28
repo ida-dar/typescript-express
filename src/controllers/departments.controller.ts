@@ -1,6 +1,8 @@
-import Department from '../models/department.model'
+import Department from '../models/department.model';
+import { Request, Response } from 'express';
+import { reqBody } from 'interfaces/reqBody';
 
-export const getAll = async (req, res) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     res.json(await Department.find())
   }
@@ -9,7 +11,7 @@ export const getAll = async (req, res) => {
   }
 }
 
-export const getRandom = async (req, res) => {
+export const getRandom = async (req: Request, res: Response) => {
   try {
     const count = await Department.countDocuments()
     const rand = Math.floor(Math.random() * count)
@@ -22,7 +24,7 @@ export const getRandom = async (req, res) => {
   }
 }
 
-export const getId = async (req, res) => {
+export const getId = async (req: Request, res: Response) => {
   try {
     const dep = await Department.findById(req.params.id)
     if(!dep) res.status(404).json({ message: 'Not found' })
@@ -33,11 +35,11 @@ export const getId = async (req, res) => {
   }
 }
 
-export const post = async (req, res) => {
+export const post = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body
-    const newDepartment = new Department({ name })
-    await newDepartment.save()
+    const { name } = req.body as reqBody
+    const depData = { name }
+    await Department.create(depData)
     res.json({ message: 'OK' })
 
   } catch(err) {
@@ -45,8 +47,8 @@ export const post = async (req, res) => {
   }
 }
 
-export const putId = async (req, res) => {
-  const { name } = req.body
+export const putId = async (req: Request, res: Response) => {
+  const { name } = req.body as reqBody
   try {
     const dep = await Department.findById(req.params.id)
     if(dep) {
@@ -60,7 +62,7 @@ export const putId = async (req, res) => {
   }
 }
 
-export const deleteId = async (req, res) => {
+export const deleteId = async (req: Request, res: Response) => {
   try {
     const dep = await Department.findById(req.params.id)
     if(dep) {

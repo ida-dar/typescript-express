@@ -1,6 +1,8 @@
 import Product from '../models/product.model'
+import { Request, Response } from 'express';
+import { reqBody } from 'interfaces/reqBody';
 
-export const getAll = async (req, res) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     res.json(await Product.find())
   }
@@ -9,7 +11,7 @@ export const getAll = async (req, res) => {
   }
 }
 
-export const getRandom = async (req, res) => {
+export const getRandom = async (req: Request, res: Response) => {
   try {
     const count = await Product.countDocuments()
     const rand = Math.floor(Math.random() * count)
@@ -22,7 +24,7 @@ export const getRandom = async (req, res) => {
   }
 }
 
-export const getId = async (req, res) => {
+export const getId = async (req: Request, res: Response) => {
   try {
     const prod = await Product.findById(req.params.id)
     if(!prod) res.status(404).json({ message: 'Not found' })
@@ -33,11 +35,11 @@ export const getId = async (req, res) => {
   }
 }
 
-export const post = async (req, res) => {
+export const post = async (req: Request, res: Response) => {
   try {
-    const { name, client } = req.body
-    const newProduct = new Product({ name, client })
-    await newProduct.save() 
+    const { name, client } = req.body as reqBody
+    const prodData = { name, client }
+    await Product.create(prodData)
     res.json({ message: 'OK' })
   } 
   catch(err) {
@@ -45,8 +47,8 @@ export const post = async (req, res) => {
   }
 }
 
-export const putId = async (req, res) => {
-  const { name, client } = req.body
+export const putId = async (req: Request, res: Response) => {
+  const { name, client } = req.body as reqBody
   try {
     const prod = await Product.findById(req.params.id)
     if(prod) {
@@ -60,7 +62,7 @@ export const putId = async (req, res) => {
   }
 }
 
-export const deleteId = async (req, res) => {
+export const deleteId = async (req: Request, res: Response) => {
   try {
     const prod = await Product.findById(req.params.id)
     if(prod) {
